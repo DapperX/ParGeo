@@ -100,10 +100,12 @@ namespace pargeo::kdTree
     };
   }
 
-  template <int dim, typename nodeT, typename objT>
-  void knnRangeHelper(nodeT *tree, objT &q, point<dim> qMin, point<dim> qMax,
+  // template <int dim, typename nodeT, typename objT>
+  template <typename nodeT, typename objT, typename Pt>
+  void knnRangeHelper(nodeT *tree, objT &q, Pt qMin, Pt qMax,
                       double radius, knnBuf::buffer<objT *> &out)
   {
+    constexpr const auto dim = Pt::dim;
     int relation = tree->boxCompare(qMin, qMax, tree->getMin(), tree->getMax());
 
     if (relation == tree->boxExclude)
@@ -134,8 +136,8 @@ namespace pargeo::kdTree
       }
       else
       {
-        knnRangeHelper<dim, nodeT, objT>(tree->L(), q, qMin, qMax, radius, out);
-        knnRangeHelper<dim, nodeT, objT>(tree->R(), q, qMin, qMax, radius, out);
+        knnRangeHelper<nodeT, objT, Pt>(tree->L(), q, qMin, qMax, radius, out);
+        knnRangeHelper<nodeT, objT, Pt>(tree->R(), q, qMin, qMax, radius, out);
       }
     }
   }
@@ -143,14 +145,15 @@ namespace pargeo::kdTree
   template <int dim, typename nodeT, typename objT>
   void knnRange(nodeT *tree, objT &q, double radius, knnBuf::buffer<objT *> &out)
   {
-    point<dim> qMin, qMax;
+    // point<dim> qMin, qMax;
+    objT qMin, qMax;
     for (size_t i = 0; i < dim; i++)
     {
       auto tmp = q[i] - radius;
       qMin[i] = tmp;
       qMax[i] = tmp + radius * 2;
     }
-    knnRangeHelper<dim, nodeT, objT>(tree, q, qMin, qMax, radius, out);
+    knnRangeHelper<nodeT, objT>(tree, q, qMin, qMax, radius, out);
   }
 
   template <int dim, typename nodeT, typename objT>
@@ -158,8 +161,8 @@ namespace pargeo::kdTree
   {
     // find the leaf first
     int relation = tree->boxCompare(tree->getMin(), tree->getMax(),
-                                    point<dim>(q.coords()),
-                                    point<dim>(q.coords()));
+                                    q.coords(),
+                                    q.coords());
     if (relation == tree->boxExclude)
     {
       return;

@@ -208,7 +208,8 @@ namespace pargeo::kdTree
 
     nodeT *sib;
 
-    parlay::slice<_objT **, _objT **> items;
+    parlay::sequence<_objT*> dummy = parlay::sequence<_objT*>(1,nullptr);
+    parlay::slice<_objT **, _objT **> items = dummy.cut(0,1);
 
     inline void minCoords(pointT &_pMin, pointT &p)
     {

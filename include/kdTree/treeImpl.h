@@ -40,13 +40,15 @@ namespace pargeo::kdTree
     {
 
       using namespace parlay;
-      using namespace parlay::internal;
+      // using namespace parlay::internal;
+      using parlay::internal::_block_size;
+      using parlay::internal::num_blocks;
 
       using T = typename In_Seq::value_type;
       size_t n = In.size();
       size_t l = num_blocks(n, _block_size);
       sequence<size_t> Sums(l);
-      sliced_for(
+      parlay::internal::sliced_for(
           n, _block_size,
           [&](size_t i, size_t s, size_t e)
           {
@@ -58,7 +60,7 @@ namespace pargeo::kdTree
           fl);
       size_t m = scan_inplace(make_slice(Sums), addm<size_t>());
       sequence<T> Out = sequence<T>::uninitialized(n);
-      sliced_for(
+      parlay::internal::sliced_for(
           n, _block_size,
           [&](size_t i, size_t s, size_t e)
           {
@@ -314,6 +316,7 @@ namespace pargeo::kdTree
                          bool parallel,
                          size_t leafSize)
   {
+    
     typedef tree<dim, objT> treeT;
     typedef node<dim, objT> nodeT;
 
@@ -327,6 +330,7 @@ namespace pargeo::kdTree
     {
       return new treeT(P, leafSize);
     }
+    
   }
 
   template <int dim, class objT>
