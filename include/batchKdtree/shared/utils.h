@@ -23,6 +23,8 @@
 
 #pragma once
 
+#include <limits>
+
 #include "parlay/parallel.h"
 #include "parlay/sequence.h"
 #include "parlay/primitives.h"
@@ -177,7 +179,7 @@ bool eraseInParallel(size_t num_points) { return num_points >= ERASE_BASE_CASE; 
 template <class TT>
 struct minmaxm {
   using T = std::pair<TT, TT>;
-  minmaxm() : identity(T(parlay::highest<TT>(), parlay::lowest<TT>())) {}
+  minmaxm() : identity(T(std::numeric_limits<TT>::max(), std::numeric_limits<TT>::lowest())) {}
   T identity;
   static T f(T a, T b) { return T((std::min)(a.first, b.first), (std::max)(a.second, b.second)); }
 };
