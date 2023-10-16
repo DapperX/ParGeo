@@ -52,7 +52,7 @@ struct buffer {
   sliceT buf;
   bool cached;
 
-  buffer() : k(-1), ptr(0), buf(), cached(false) {}
+  buffer() : k(-1), ptr(0), buf(nullptr,nullptr), cached(false) {}
   buffer(intT t_k, sliceT t_buf) : k(t_k), ptr(0), buf(t_buf), cached(true) {}
 
   inline void reset() { ptr = 0; }
