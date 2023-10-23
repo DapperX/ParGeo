@@ -29,7 +29,7 @@
 #include "./buffer.h"
 
 #ifdef PRINT_LOGTREE_TIMINGS
-#include "common/get_time.h"
+#include "get_time.h"
 #endif
 
 #ifdef LOGTREE_USE_BLOOM
@@ -419,6 +419,7 @@ class LogTree {
 
   template <bool bulk, class R>
   void erase(const R& points) {
+    // timer te("[erase]");
     constexpr int BUFFER_TREE_IDX = -1;
     auto tree_ids = gatherFullTrees();
     // PHASE 1: Erase points from trees ----------------------
@@ -480,6 +481,8 @@ class LogTree {
       }
     }
 
+    // printf("PHASE_1: %f\n", te.get_next());
+
     // PHASE 2: Collect all depleted trees
     // compute depleted trees
     parlay::sequence<size_t> gather_points;
@@ -510,9 +513,11 @@ class LogTree {
       for (size_t i = 0; i < depleted_trees.size(); i++)
         gather_tree(i);
     }
+    // printf("PHASE_2_1: %f\n", te.get_next());
 
     // reinsert them
     insert(points_to_move);
+    // printf("PHASE_2_2: %f\n", te.get_next());
   }
 
   template <class R>
