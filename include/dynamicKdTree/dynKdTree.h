@@ -33,7 +33,7 @@ namespace dynKdTree {
 		 Sums[i] = c;
 	       },
 	       fl);
-    size_t m = scan_inplace(make_slice(Sums), addm<size_t>());
+    size_t m = scan_inplace(make_slice(Sums), legacy_monoid_adapter(addm<size_t>()));
     sequence<T> Out = sequence<T>::uninitialized(n);
     sliced_for(n, _block_size,
 	       [&](size_t i, size_t s, size_t e) {
@@ -54,7 +54,8 @@ namespace dynKdTree {
     return m;
   }
 
-  template<int dim, typename _floatT = double>
+  // template<int dim, typename _floatT = double>
+  template<int dim, typename _floatT = long>
   class coordinate {
 
   protected:
